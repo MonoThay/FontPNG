@@ -145,7 +145,7 @@ def abrir_previsualizacao(imagem_final, salvar_func=None):
 def criar_interface():
     app = Tk()
     app.title("FancyCounterMaker")
-    app.geometry("500x350")
+    app.geometry("800x800")
 
     Label(app, text="Arquivos de entrada:").grid(row=0, column=0, padx=10, pady=10, sticky="w")
     entrada = Entry(app, width=40)
@@ -161,7 +161,7 @@ def criar_interface():
     gap_linha = Entry(app, width=10)
     gap_linha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
 
-    Label(app, text="Gap entre caracteres (px):").grid(row=3, column=0, padx=10, pady=10, sticky="w")
+    Label(app, text="Espaçamento entre caracteres (px):").grid(row=3, column=0, padx=10, pady=10, sticky="w")
     gap_entre = Entry(app, width=10)
     gap_entre.grid(row=3, column=1, padx=10, pady=10, sticky="w")
 
