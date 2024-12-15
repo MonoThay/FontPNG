@@ -1,7 +1,11 @@
-from tkinter import Tk, Label, Entry, Button, filedialog, messagebox, Canvas, Scrollbar, HORIZONTAL, Toplevel
-from PIL import Image, ImageDraw, ImageTk
-import numpy as np
 import os
+from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button
+
+import numpy as np
+import ttkbootstrap as ttk
+from PIL import Image, ImageDraw, ImageTk
+from ttkbootstrap.constants import *
+
 
 def processar_imagem(input_image, gap_linha, gap_entre_caracteres):
     img = Image.open(input_image).convert("RGBA")
@@ -143,31 +147,39 @@ def abrir_previsualizacao(imagem_final, salvar_func=None):
     Button(previsualizacao, text="Cancelar", command=previsualizacao.destroy).pack(side="left", padx=10, pady=10)
 
 def criar_interface():
-    app = Tk()
-    app.title("FancyCounterMaker")
-    app.geometry("800x800")
+    root = ttk.Window("FontPNG")
+    style = ttk.Style("superhero")
+    root.iconbitmap("icon.ico")
 
-    Label(app, text="Arquivos de entrada:").grid(row=0, column=0, padx=10, pady=10, sticky="w")
-    entrada = Entry(app, width=40)
-    entrada.grid(row=0, column=1, padx=10, pady=10)
-    Button(app, text="Selecionar", command=lambda: selecionar_arquivos_entrada(entrada)).grid(row=0, column=2, padx=10, pady=10)
+    # Widgets para selecionar arquivos de entrada
+    ttk.Label(root, text="Arquivos de entrada:").pack(anchor="w", padx=10, pady=(10, 0))
+    entrada_arquivos = ttk.Entry(root, width=50)
+    entrada_arquivos.pack(anchor="w",padx=10, pady=5)
+    ttk.Button(root, text="Selecionar Arquivos", command=lambda: selecionar_arquivos_entrada(entrada_arquivos)).pack(anchor="w", padx=10, pady=5)
 
-    Label(app, text="Pasta de saída:").grid(row=1, column=0, padx=10, pady=10, sticky="w")
-    saida = Entry(app, width=40)
-    saida.grid(row=1, column=1, padx=10, pady=10)
-    Button(app, text="Selecionar", command=lambda: selecionar_pasta_saida(saida)).grid(row=1, column=2, padx=10, pady=10)
+    # Widgets para selecionar pasta de saída
+    ttk.Label(root, text="Pasta de saída:").pack(anchor="w", padx=10, pady=(10, 0))
+    entrada_pasta = ttk.Entry(root, width=50)
+    entrada_pasta.pack(anchor="w", padx=10, pady=5)
+    ttk.Button(root, text="Selecionar Pasta", command=lambda: selecionar_pasta_saida(entrada_pasta)).pack(anchor="w", padx=10, pady=5)
 
-    Label(app, text="Gap na linha (px):").grid(row=2, column=0, padx=10, pady=10, sticky="w")
-    gap_linha = Entry(app, width=10)
-    gap_linha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+    # Gaps
+    ttk.Label(root, text="Gap fancycounter (px):").pack(anchor="w", padx=10, pady=(10, 0))
+    gap_linha = ttk.Entry(root, width=10)
+    gap_linha.pack(anchor="w", padx=10, pady=5)
 
-    Label(app, text="Espaçamento entre caracteres (px):").grid(row=3, column=0, padx=10, pady=10, sticky="w")
-    gap_entre = Entry(app, width=10)
-    gap_entre.grid(row=3, column=1, padx=10, pady=10, sticky="w")
+    ttk.Label(root, text="Gap entre caracteres (px):").pack(anchor="w", padx=10, pady=(10, 0))
+    gap_entre = ttk.Entry(root, width=10)
+    gap_entre.pack(anchor="w", padx=10, pady=5)
 
-    Button(app, text="Pré-visualizar", command=lambda: previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida)).grid(row=4, column=1, pady=20)
+    # Botão para pré-visualizar
+    ttk.Button(
+        root,
+        text="Pré-visualizar",
+        command=lambda: previsualizar_multiplos_arquivos(entrada_arquivos, gap_linha, gap_entre, entrada_pasta)
+    ).pack(anchor="w", padx=10, pady=20)
 
-    app.mainloop()
+    root.mainloop()
 
 if __name__ == "__main__":
     criar_interface()
