@@ -175,18 +175,17 @@ def criar_interface():
     # Gaps
     ttk.Label(root, text="Gap fancycounter (px):").pack(anchor="w", padx=10, pady=(10, 0))
     gap_linha = ttk.Entry(root, width=10)
+    gap_linha.insert(0, "0")
     gap_linha.pack(anchor="w", padx=10, pady=5)
 
     ttk.Label(root, text="Gap entre caracteres (px):").pack(anchor="w", padx=10, pady=(10, 0))
     gap_entre = ttk.Entry(root, width=10)
+    gap_entre.insert(0, "1")
     gap_entre.pack(anchor="w", padx=10, pady=5)
 
     #botão controle fancycounter (retorna 0 e 1)
     check_fancycounter = ttk.IntVar()
     ttk.Checkbutton(root, bootstyle="round-toggle", text="Habilitar Fancycounter", variable= check_fancycounter, onvalue=1, offvalue=0).pack(anchor="w", padx=10, pady=15)
-
-    '''# Definir presset
-    cb = ttk.Combobox(state="readonly").pack(anchor="w", padx=10, pady=5)'''
 
     # Botão para pré-visualizar
     ttk.Button(root, text="Pré-visualizar", command=lambda: previsualizar_multiplos_arquivos(entrada_arquivos, gap_linha, gap_entre, entrada_pasta,check_fancycounter)).pack(anchor="w", padx=10, pady=20)
