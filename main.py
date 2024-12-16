@@ -1,6 +1,5 @@
 import os
 from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button
-
 import numpy as np
 import ttkbootstrap as ttk
 from PIL import Image, ImageDraw, ImageTk
