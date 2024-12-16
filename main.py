@@ -1,5 +1,4 @@
 import os
-from tabnanny import check
 from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button
 
 import numpy as np
