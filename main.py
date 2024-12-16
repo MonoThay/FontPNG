@@ -6,12 +6,15 @@ import ttkbootstrap as ttk
 from PIL import Image, ImageDraw, ImageTk
 from ttkbootstrap.constants import *
 
-
-def processar_imagem(input_image, gap_linha, gap_entre_caracteres):
+def bound_box_image(input_image):
     img = Image.open(input_image).convert("RGBA")
     bbox = img.getbbox()
     img_cortada = img.crop(bbox)
-    img = img_cortada #substitui a imagem pela nova imagem cortada
+
+    return img_cortada
+
+def processar_imagem(input_image, gap_linha, gap_entre_caracteres):
+    img = bound_box_image(input_image)
     img_array = np.array(img)
 
     # Identificar colunas não transparentes
@@ -148,7 +151,7 @@ def abrir_previsualizacao(imagem_final, salvar_func=None):
 
 def criar_interface():
     root = ttk.Window("FontPNG")
-    style = ttk.Style("superhero")
+    style = ttk.Style("minty")
     root.iconbitmap("icon.ico")
 
     # Widgets para selecionar arquivos de entrada
