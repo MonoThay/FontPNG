@@ -43,8 +43,14 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
 
     index = 0
     for inicio_caractere, fim_caractere in caracteres:
+        caracteres_com_fancycounter = 10
         largura_caractere = fim_caractere - inicio_caractere
-        nova_largura = maior_largura
+
+        nova_largura = largura_caractere
+        turn_on_fancycounter = presset_fancycounter(check_fancycounter)
+
+        if index < caracteres_com_fancycounter and turn_on_fancycounter == 1:
+            nova_largura = maior_largura
 
         # Recortar o caractere
         caractere_crop = img.crop((inicio_caractere, 0, fim_caractere, img.height))
@@ -59,9 +65,7 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
         caractere_img.paste(caractere_crop, (inicio_centro, 0))
 
         # Desenhar uma linha contínua preta abaixo do caractere
-        turn_on_fancycounter = presset_fancycounter(check_fancycounter)
 
-        caracteres_com_fancycounter = 10
         if turn_on_fancycounter == 1:
             if index < caracteres_com_fancycounter:
                 draw = ImageDraw.Draw(caractere_img)
@@ -181,7 +185,7 @@ def criar_interface():
     # Gaps
     ttk.Label(root, text="Gap fancycounter (px):").pack(anchor="w", padx=10, pady=(10, 0))
     gap_linha = ttk.Entry(root, width=10)
-    gap_linha.insert(0, "0")
+    gap_linha.insert(0, "1")
     gap_linha.pack(anchor="w", padx=10, pady=5)
 
     ttk.Label(root, text="Gap entre caracteres (px):").pack(anchor="w", padx=10, pady=(10, 0))
