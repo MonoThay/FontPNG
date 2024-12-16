@@ -1,4 +1,5 @@
 import os
+from tabnanny import check
 from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button
 
 import numpy as np
@@ -13,7 +14,7 @@ def bound_box_image(input_image):
 
     return img_cortada
 
-def processar_imagem(input_image, gap_linha, gap_entre_caracteres):
+def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancycounter):
     img = bound_box_image(input_image)
     img_array = np.array(img)
 
@@ -57,13 +58,15 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres):
         caractere_img.paste(caractere_crop, (inicio_centro, 0))
 
         # Desenhar uma linha contínua preta abaixo do caractere
-        draw = ImageDraw.Draw(caractere_img)
-        linha_posicao_y = nova_altura
-        draw.line(
-            [0, linha_posicao_y, nova_largura, linha_posicao_y],
-            fill=(0, 0, 0, int(0.02 * 255)),  # Preto com 2% de opacidade
-            width=1
-        )
+        turn_on_fancycounter = presset_fancycounter(check_fancycounter)
+        if turn_on_fancycounter == 1:
+            draw = ImageDraw.Draw(caractere_img)
+            linha_posicao_y = nova_altura
+            draw.line(
+                [0, linha_posicao_y, nova_largura, linha_posicao_y],
+                fill=(0, 0, 0, int(0.02 * 255)),  # Preto com 2% de opacidade
+                width=1
+            )
 
         imagens_caracteres.append(caractere_img)
 
@@ -90,6 +93,9 @@ def selecionar_pasta_saida(entry):
         entry.delete(0, "end")
         entry.insert(0, pasta)
 
+def presset_fancycounter(check_fancycounter):
+    return check_fancycounter.get()
+
 def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas):
     for img, caminho in zip(imagens_processadas, caminhos_saidas):
         try:
@@ -97,7 +103,7 @@ def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas):
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
 
-def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida):
+def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida,check_fancycounter):
     try:
         gap_linha = int(gap_linha.get())
         gap_entre = int(gap_entre.get())
@@ -114,7 +120,7 @@ def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida):
         imagens_processadas = []
         caminhos_saida = []
         for i, img_path in enumerate(input_images):
-            imagem_final = processar_imagem(img_path, gap_linha, gap_entre)
+            imagem_final = processar_imagem(img_path, gap_linha, gap_entre,check_fancycounter)
             imagens_processadas.append(imagem_final)
 
             nome_base = os.path.basename(img_path)
@@ -151,7 +157,7 @@ def abrir_previsualizacao(imagem_final, salvar_func=None):
 
 def criar_interface():
     root = ttk.Window("FontPNG")
-    style = ttk.Style("minty")
+    style = ttk.Style("flatly")
     root.iconbitmap("icon.ico")
 
     # Widgets para selecionar arquivos de entrada
@@ -175,12 +181,15 @@ def criar_interface():
     gap_entre = ttk.Entry(root, width=10)
     gap_entre.pack(anchor="w", padx=10, pady=5)
 
+    #botão controle fancycounter (retorna 0 e 1)
+    check_fancycounter = ttk.IntVar()
+    ttk.Checkbutton(root, bootstyle="round-toggle", text="Habilitar Fancycounter", variable= check_fancycounter, onvalue=1, offvalue=0).pack(anchor="w", padx=10, pady=15)
+
+    '''# Definir presset
+    cb = ttk.Combobox(state="readonly").pack(anchor="w", padx=10, pady=5)'''
+
     # Botão para pré-visualizar
-    ttk.Button(
-        root,
-        text="Pré-visualizar",
-        command=lambda: previsualizar_multiplos_arquivos(entrada_arquivos, gap_linha, gap_entre, entrada_pasta)
-    ).pack(anchor="w", padx=10, pady=20)
+    ttk.Button(root, text="Pré-visualizar", command=lambda: previsualizar_multiplos_arquivos(entrada_arquivos, gap_linha, gap_entre, entrada_pasta,check_fancycounter)).pack(anchor="w", padx=10, pady=20)
 
     root.mainloop()
 
