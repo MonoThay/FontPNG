@@ -41,6 +41,7 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
 
     imagens_caracteres = []
 
+    index = 0
     for inicio_caractere, fim_caractere in caracteres:
         largura_caractere = fim_caractere - inicio_caractere
         nova_largura = maior_largura
@@ -59,14 +60,19 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
 
         # Desenhar uma linha contínua preta abaixo do caractere
         turn_on_fancycounter = presset_fancycounter(check_fancycounter)
+
+        caracteres_com_fancycounter = 10
         if turn_on_fancycounter == 1:
-            draw = ImageDraw.Draw(caractere_img)
-            linha_posicao_y = nova_altura
-            draw.line(
-                [0, linha_posicao_y, nova_largura, linha_posicao_y],
-                fill=(0, 0, 0, int(0.02 * 255)),  # Preto com 2% de opacidade
-                width=1
-            )
+            if index < caracteres_com_fancycounter:
+                draw = ImageDraw.Draw(caractere_img)
+                linha_posicao_y = nova_altura
+                draw.line(
+                    [0, linha_posicao_y, nova_largura, linha_posicao_y],
+                    fill=(0, 0, 0, int(0.02 * 255)),  # Preto com 2% de opacidade
+                    width=1
+                )
+
+        index += 1
 
         imagens_caracteres.append(caractere_img)
 
