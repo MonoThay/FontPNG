@@ -17,6 +17,8 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
     img = bound_box_image(input_image)
     img_array = np.array(img)
 
+    caracteres_com_fancycounter = 10
+
     # Identificar colunas não transparentes
     non_transparent_cols = np.any(img_array[:, :, 3] > 0, axis=0)
 
@@ -36,7 +38,6 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
         caracteres.append((inicio, len(non_transparent_cols)))
 
     # Limitar a análise aos primeiros 10 caracteres
-    caracteres_com_fancycounter = 10
     caracteres_a_comparar = caracteres[:caracteres_com_fancycounter]  # Apenas os 10 primeiros
 
     # Encontrar o maior caractere entre os 10 primeiros
@@ -48,7 +49,6 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
 
     index = 0
     for inicio_caractere, fim_caractere in caracteres:
-        caracteres_com_fancycounter = 10
         largura_caractere = fim_caractere - inicio_caractere
 
         nova_largura = largura_caractere
