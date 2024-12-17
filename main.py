@@ -1,4 +1,5 @@
 import os
+from operator import index
 from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button
 import numpy as np
 import ttkbootstrap as ttk
@@ -34,8 +35,14 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
     if inicio is not None:
         caracteres.append((inicio, len(non_transparent_cols)))
 
-    maior_caractere = max(caracteres, key=lambda x: x[1] - x[0])
-    maior_largura = (maior_caractere[1] - maior_caractere[0]) + 2 * gap_linha
+    # Limitar a análise aos primeiros 10 caracteres
+    caracteres_com_fancycounter = 10
+    caracteres_a_comparar = caracteres[:caracteres_com_fancycounter]  # Apenas os 10 primeiros
+
+    # Encontrar o maior caractere entre os 10 primeiros
+    if caracteres_a_comparar:
+        maior_caractere = max(caracteres_a_comparar, key=lambda x: x[1] - x[0])
+        maior_largura = (maior_caractere[1] - maior_caractere[0]) + 2 * gap_linha
 
     imagens_caracteres = []
 
