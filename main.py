@@ -131,6 +131,7 @@ def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas,check_criar_nov
                 messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
     else:
         messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
+    messagebox.showinfo("Salvar", f"Arquivos salvos com sucesso!")
 
 def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida,check_fancycounter, check_criar_nova_pasta):
     try:
