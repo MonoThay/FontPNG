@@ -112,14 +112,18 @@ def switch_fancy_counter(check_fancycounter):
 
 def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas,check_criar_nova_pasta):
     caminho = caminhos_saidas
-    check = check_criar_nova_pasta.get()
-    if check == 0:
+    check_switch = check_criar_nova_pasta.get()
+
+    check_imagem_salva = True
+
+    if check_switch == 0:
         for img, caminho in zip(imagens_processadas, caminhos_saidas):
             try:
                 img.save(caminho)
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
-    elif check == 1:
+                check_imagem_salva = False
+    elif check_switch == 1:
         for img, caminho in zip(imagens_processadas, caminhos_saidas):
             try:
                 pasta_nova = os.path.join(os.path.dirname(caminho), "FontPNG-export")  # Novo diretório
@@ -129,9 +133,14 @@ def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas,check_criar_nov
                 img.save(novo_caminho)
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
+                check_imagem_salva = False
     else:
         messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
-    messagebox.showinfo("Salvar", f"Arquivos salvos com sucesso!")
+        check_imagem_salva = False
+
+    #Corfimação que a imagem foi salva
+    if check_imagem_salva == True:
+        messagebox.showinfo("Salvar", f"Arquivos salvos com sucesso!")
 
 def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida,check_fancycounter, check_criar_nova_pasta):
     try:
