@@ -1,5 +1,4 @@
 import os
-from operator import index
 from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button
 import numpy as np
 import ttkbootstrap as ttk
@@ -115,7 +114,14 @@ def switch_fancy_counter(check_fancycounter):
 def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas):
     for img, caminho in zip(imagens_processadas, caminhos_saidas):
         try:
-            img.save(caminho)
+            pasta_nova = os.path.join(os.path.dirname(caminho), "FontPNG-export")  # Novo diretório
+            if not os.path.exists(pasta_nova):
+                os.makedirs(pasta_nova)  # Cria a nova pasta, se não existir
+
+            novo_caminho = os.path.join(pasta_nova, os.path.basename(caminho))
+
+            img.save(novo_caminho)
+
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
 
@@ -198,7 +204,7 @@ def abrir_previsualizacao(imagem_final, salvar_func=None):
     v_scroll.grid(row=0, column=1, sticky="ns")
 
     # Slider para controle de zoom
-    zoom_label = ttk.Label(previsualizacao, text="Zoom (1%)")
+    zoom_label = ttk.Label(previsualizacao, text="Zoom")
     zoom_label.grid(row=2, column=0, sticky="n", padx=10, pady=5)
 
     zoom_slider = ttk.Scale(previsualizacao, from_=1, to=200, orient="horizontal", command=aplicar_zoom)
