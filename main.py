@@ -1,8 +1,10 @@
 import os
+from ensurepip import bootstrap
 from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button
 import numpy as np
 import ttkbootstrap as ttk
 from PIL import Image, ImageDraw, ImageTk
+from PIL.ImageChops import offset
 from ttkbootstrap.constants import *
 
 def bound_box_image(input_image):
@@ -111,21 +113,29 @@ def selecionar_pasta_saida(entry):
 def switch_fancy_counter(check_fancycounter):
     return check_fancycounter.get()
 
-def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas):
-    for img, caminho in zip(imagens_processadas, caminhos_saidas):
-        try:
-            pasta_nova = os.path.join(os.path.dirname(caminho), "FontPNG-export")  # Novo diretório
-            if not os.path.exists(pasta_nova):
-                os.makedirs(pasta_nova)  # Cria a nova pasta, se não existir
+def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas,check_criar_nova_pasta):
+    caminho = caminhos_saidas
+    check = check_criar_nova_pasta.get()
+    if check == 0:
+        for img, caminho in zip(imagens_processadas, caminhos_saidas):
+            try:
+                img.save(caminho)
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
+    elif check == 1:
+        for img, caminho in zip(imagens_processadas, caminhos_saidas):
+            try:
+                pasta_nova = os.path.join(os.path.dirname(caminho), "FontPNG-export")  # Novo diretório
+                if not os.path.exists(pasta_nova):
+                    os.makedirs(pasta_nova)  # Cria a nova pasta, se não existir
+                novo_caminho = os.path.join(pasta_nova, os.path.basename(caminho))
+                img.save(novo_caminho)
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
+    else:
+        messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
 
-            novo_caminho = os.path.join(pasta_nova, os.path.basename(caminho))
-
-            img.save(novo_caminho)
-
-        except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
-
-def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida,check_fancycounter):
+def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida,check_fancycounter, check_criar_nova_pasta):
     try:
         gap_linha = int(gap_linha.get())
         gap_entre = int(gap_entre.get())
@@ -150,7 +160,7 @@ def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida,check_
             caminhos_saida.append(caminho_saida)
 
         # Pré-visualização de apenas o primeiro arquivo para simplificação
-        abrir_previsualizacao(imagens_processadas[0], lambda: salvar_arquivos_em_lote(imagens_processadas, caminhos_saida))
+        abrir_previsualizacao(imagens_processadas[0], lambda: salvar_arquivos_em_lote(imagens_processadas, caminhos_saida,check_criar_nova_pasta))
 
     except Exception as e:
         messagebox.showerror("Erro", f"Erro na pré-visualização: {e}")
@@ -235,6 +245,10 @@ def criar_interface():
     entrada_pasta.pack(anchor="w", padx=10, pady=5)
     ttk.Button(root, text="Selecionar Pasta", command=lambda: selecionar_pasta_saida(entrada_pasta)).pack(anchor="w", padx=10, pady=5)
 
+    #toggle criar pasta de saida
+    check_criar_nova_pasta = ttk.IntVar()
+    ttk.Checkbutton(root, bootstyle="round-toggle", text="Criar nova pasta", variable=check_criar_nova_pasta, onvalue=1, offvalue=0 ).pack(anchor="w", padx=10, pady=5)
+
     # Gaps
     ttk.Label(root, text="Gap fancycounter (px):").pack(anchor="w", padx=10, pady=(10, 0))
     gap_linha = ttk.Entry(root, width=10)
@@ -251,7 +265,7 @@ def criar_interface():
     ttk.Checkbutton(root, bootstyle="round-toggle", text="Habilitar Fancycounter", variable= check_fancycounter, onvalue=1, offvalue=0).pack(anchor="w", padx=10, pady=15)
 
     # Botão para pré-visualizar
-    ttk.Button(root, text="Pré-visualizar", command=lambda: previsualizar_multiplos_arquivos(entrada_arquivos, gap_linha, gap_entre, entrada_pasta,check_fancycounter)).pack(anchor="w", padx=10, pady=20)
+    ttk.Button(root, text="Pré-visualizar", command=lambda: previsualizar_multiplos_arquivos(entrada_arquivos, gap_linha, gap_entre, entrada_pasta,check_fancycounter,check_criar_nova_pasta)).pack(anchor="w", padx=10, pady=20)
 
     root.mainloop()
 
