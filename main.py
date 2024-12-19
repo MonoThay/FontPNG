@@ -1,11 +1,8 @@
 import os
-from ensurepip import bootstrap
-from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button
+from tkinter import filedialog, messagebox, Canvas, Toplevel, Scrollbar, Button, Label
 import numpy as np
 import ttkbootstrap as ttk
 from PIL import Image, ImageDraw, ImageTk
-from PIL.ImageChops import offset
-from ttkbootstrap.constants import *
 
 def bound_box_image(input_image):
     img = Image.open(input_image).convert("RGBA")
@@ -228,6 +225,60 @@ def abrir_previsualizacao(imagem_final, salvar_func=None):
     cancel_button = Button(previsualizacao, text="Cancelar", command=previsualizacao.destroy)
     cancel_button.grid(row=3, column=0, sticky="w", padx=10, pady=10)
 
+def help():
+    help_window = Toplevel()
+    help_window.title("Ajuda - FontPNG")
+
+    # Criando a área de texto para exibir o conteúdo de ajuda
+    help_text = """
+    TEXTO DO CHAT GPT VAI SER ATUALIZADO
+    
+    ### Ajuda - FontPNG
+
+    Este programa permite processar imagens de texto em formato PNG, JPG ou JPEG, realizando o recorte dos caracteres em cada imagem e ajustando seu formato e espaçamento. Além disso, você pode escolher a opção de criar uma nova pasta para salvar as imagens processadas.
+
+    #### Passos para usar:
+
+    1. **Seleção de Arquivos de Entrada**:
+       - Clique no botão **"Selecionar Arquivos"** para escolher uma ou mais imagens de texto para processamento.
+       - As imagens devem estar em formatos compatíveis (PNG, JPG ou JPEG).
+
+    2. **Seleção de Pasta de Saída**:
+       - Clique no botão **"Selecionar Pasta"** para escolher onde as imagens processadas serão salvas.
+       - O programa permite que você salve as imagens na pasta atual ou crie uma nova pasta.
+
+    3. **Configuração dos Parâmetros**:
+       - **Gap Fancycounter (px)**: Defina o espaçamento extra em pixels para o efeito "fancycounter" nas imagens.
+       - **Gap entre Caracteres (px)**: Ajuste o espaçamento entre os caracteres recortados.
+       - **Habilitar Fancycounter**: Se ativado, o programa ajustará a largura dos caracteres recortados para um tamanho padrão.
+
+    4. **Pré-visualização**:
+       - Clique em **"Pré-visualizar"** para ver a imagem processada antes de salvar. A pré-visualização pode ser ajustada com zoom para visualizar melhor os detalhes da imagem.
+
+    5. **Opção de Criar Nova Pasta**:
+       - Se ativado, o programa criará uma nova pasta chamada "FontPNG-export" para salvar as imagens processadas. Caso contrário, as imagens serão salvas diretamente na pasta de destino escolhida.
+
+    6. **Salvar Imagens**:
+       - Após a pré-visualização, você pode salvar as imagens processadas clicando em **"Salvar"** ou cancelar a operação.
+
+    #### Funções adicionais:
+
+    - **Zoom na pré-visualização**: Ajuste o zoom da imagem pré-visualizada com o controle deslizante para um maior ou menor nível de detalhe.
+
+    - **Erros**: Caso ocorra algum erro durante a execução, uma mensagem será exibida informando o problema. Verifique se os arquivos de entrada estão corretos e se a pasta de saída foi selecionada adequadamente.
+
+    #### Dúvidas e Suporte:
+    Se você tiver algum problema ao usar o programa, por favor, verifique se todas as etapas foram seguidas corretamente. Caso o erro persista, entre em contato com o desenvolvedor para obter mais assistência.
+    """
+
+    # Criando um widget de label para mostrar o texto de ajuda
+    help_label = Label(help_window, text=help_text, justify="left", font=("Arial", 10), padx=10, pady=10)
+    help_label.pack(expand=True, fill="both")
+
+    # Botão para fechar a janela de ajuda
+    close_button = Button(help_window, text="Fechar", command=help_window.destroy)
+    close_button.pack(pady=10)
+
 def criar_interface():
     root = ttk.Window("FontPNG")
     style = ttk.Style("flatly")
@@ -266,6 +317,7 @@ def criar_interface():
 
     # Botão para pré-visualizar
     ttk.Button(root, text="Pré-visualizar", command=lambda: previsualizar_multiplos_arquivos(entrada_arquivos, gap_linha, gap_entre, entrada_pasta,check_fancycounter,check_criar_nova_pasta)).pack(anchor="w", padx=10, pady=20)
+    #ttk.Button(root, text="Help", command=help).pack(anchor="w", padx=10, pady=10)
 
     root.mainloop()
 
