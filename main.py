@@ -38,7 +38,7 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
         caracteres.append((inicio, len(non_transparent_cols)))
 
     # Limitar a análise aos primeiros 10 caracteres
-    caracteres_a_comparar = caracteres[:caracteres_com_fancycounter]  # Apenas os 10 primeiros
+    caracteres_a_comparar = caracteres[:caracteres_com_fancycounter]
 
     # Encontrar o maior caractere entre os 10 primeiros
     if caracteres_a_comparar:
@@ -52,7 +52,7 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
         largura_caractere = fim_caractere - inicio_caractere
 
         nova_largura = largura_caractere
-        turn_on_fancycounter = presset_fancycounter(check_fancycounter)
+        turn_on_fancycounter = switch_fancy_counter(check_fancycounter)
 
         if index < caracteres_com_fancycounter and turn_on_fancycounter == 1:
             nova_largura = maior_largura
@@ -85,6 +85,7 @@ def processar_imagem(input_image, gap_linha, gap_entre_caracteres, check_fancyco
 
         imagens_caracteres.append(caractere_img)
 
+    #Cria iamgem final
     largura_total = sum(img.width for img in imagens_caracteres) + gap_entre_caracteres * (len(imagens_caracteres) - 1)
     altura_maxima = max(img.height for img in imagens_caracteres)
 
@@ -108,7 +109,7 @@ def selecionar_pasta_saida(entry):
         entry.delete(0, "end")
         entry.insert(0, pasta)
 
-def presset_fancycounter(check_fancycounter):
+def switch_fancy_counter(check_fancycounter):
     return check_fancycounter.get()
 
 def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas):
@@ -151,24 +152,65 @@ def previsualizar_multiplos_arquivos(entrada, gap_linha, gap_entre, saida,check_
 def abrir_previsualizacao(imagem_final, salvar_func=None):
     previsualizacao = Toplevel()
     previsualizacao.title("Pré-visualização")
-    previsualizacao.geometry("800x500")
+    previsualizacao.geometry("800x600")
 
+    # Configuração do grid
+    previsualizacao.grid_rowconfigure(0, weight=1)
+    previsualizacao.grid_columnconfigure(0, weight=1)
+
+    # Canvas e barras de rolagem
     canvas = Canvas(previsualizacao, bg="white")
-    h_scroll = Scrollbar(previsualizacao, orient=HORIZONTAL, command=canvas.xview)
-    canvas.config(xscrollcommand=h_scroll.set)
+    h_scroll = Scrollbar(previsualizacao, orient="horizontal", command=canvas.xview)
+    v_scroll = Scrollbar(previsualizacao, orient="vertical", command=canvas.yview)
 
-    img_tk = ImageTk.PhotoImage(imagem_final)
-    canvas.image = img_tk
-    canvas.create_image(0, 0, anchor="nw", image=img_tk)
+    canvas.config(xscrollcommand=h_scroll.set, yscrollcommand=v_scroll.set)
+
+    # Carregar a imagem original
+    img_original = imagem_final  # A imagem PIL original
+    img_tk = ImageTk.PhotoImage(img_original)
+    canvas.image_id = canvas.create_image(0, 0, anchor="nw", image=img_tk)
     canvas.config(scrollregion=canvas.bbox("all"))
 
-    canvas.pack(side="top", fill="both", expand=True)
-    h_scroll.pack(side="bottom", fill="x")
+    # Estado do zoom
+    zoom_state = {"current_zoom": 100}
 
+    # Função para aplicar zoom com base no valor do slider
+    def aplicar_zoom(val):
+        new_zoom = float(val)
+        zoom_percent = new_zoom / 100
+        new_width = int(img_original.width * zoom_percent)
+        new_height = int(img_original.height * zoom_percent)
+
+        # Redimensionar a imagem
+        img_resized = img_original.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        img_tk_resized = ImageTk.PhotoImage(img_resized)
+
+        # Atualizar a imagem no canvas
+        canvas.image = img_tk_resized
+        canvas.itemconfig(canvas.image_id, image=img_tk_resized)
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+        zoom_state["current_zoom"] = new_zoom
+
+    # Posicionamento no grid
+    canvas.grid(row=0, column=0, sticky="nsew")
+    h_scroll.grid(row=1, column=0, sticky="ew")
+    v_scroll.grid(row=0, column=1, sticky="ns")
+
+    # Slider para controle de zoom
+    zoom_label = ttk.Label(previsualizacao, text="Zoom (1%)")
+    zoom_label.grid(row=2, column=0, sticky="n", padx=10, pady=5)
+
+    zoom_slider = ttk.Scale(previsualizacao, from_=1, to=200, orient="horizontal", command=aplicar_zoom)
+    zoom_slider.set(100)  # Começa com zoom de 100%
+    zoom_slider.grid(row=3, column=0, sticky="ew", padx=100, pady=5)
+
+    # Botões de salvar e cancelar
     confirm_button = Button(previsualizacao, text="Salvar", command=lambda: [salvar_func(), previsualizacao.destroy()])
-    confirm_button.pack(side="right", padx=10, pady=10)
+    confirm_button.grid(row=3, column=0, sticky="e", padx=10, pady=10)
 
-    Button(previsualizacao, text="Cancelar", command=previsualizacao.destroy).pack(side="left", padx=10, pady=10)
+    cancel_button = Button(previsualizacao, text="Cancelar", command=previsualizacao.destroy)
+    cancel_button.grid(row=3, column=0, sticky="w", padx=10, pady=10)
 
 def criar_interface():
     root = ttk.Window("FontPNG")
