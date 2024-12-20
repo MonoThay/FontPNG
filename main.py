@@ -110,27 +110,46 @@ def selecionar_pasta_saida(entry):
 def switch_fancy_counter(check_fancycounter):
     return check_fancycounter.get()
 
-def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas,check_criar_nova_pasta):
-    caminho = caminhos_saidas
-    check_switch = check_criar_nova_pasta.get()
+def verificar_tamanho_da_imagem(img, caminho):
+    TAMANHO_MAXIMO_KB = 1200000  # 1200 KB
+    DIMENSAO_MAXIMA = 16000  # 16 mil pixels (largura ou altura)
 
+    # Verificar tamanho do arquivo
+    tamanho_imagem_kb = os.path.getsize(caminho)
+    if tamanho_imagem_kb > TAMANHO_MAXIMO_KB:
+        messagebox.showerror("Erro", f"A imagem {caminho} é maior que o limite de 1.200 KB ({tamanho_imagem_kb:.2f} KB).")
+        return False
+
+    # Verificar dimensões da imagem
+    largura, altura = img.size
+    if altura > DIMENSAO_MAXIMA or largura > DIMENSAO_MAXIMA:
+        messagebox.showerror("Erro",f"A imagem {caminho} tem dimensões maiores que o limite de 16000 pixels ({largura}x{altura} pixels).")
+        return False
+    return True
+
+def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas,check_criar_nova_pasta):
+    check_switch = check_criar_nova_pasta.get()
     check_imagem_salva = True
 
     if check_switch == 0:
         for img, caminho in zip(imagens_processadas, caminhos_saidas):
             try:
-                img.save(caminho)
+                if verificar_tamanho_da_imagem(img, caminho):  # Verifica se a imagem é válida antes de salvar
+                    img.save(caminho)
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
                 check_imagem_salva = False
     elif check_switch == 1:
         for img, caminho in zip(imagens_processadas, caminhos_saidas):
             try:
-                pasta_nova = os.path.join(os.path.dirname(caminho), "FontPNG-export")  # Novo diretório
-                if not os.path.exists(pasta_nova):
-                    os.makedirs(pasta_nova)  # Cria a nova pasta, se não existir
-                novo_caminho = os.path.join(pasta_nova, os.path.basename(caminho))
-                img.save(novo_caminho)
+                if verificar_tamanho_da_imagem(img, caminho):  # Verifica se a imagem é válida antes de salvar
+                    pasta_nova = os.path.join(os.path.dirname(caminho), "FontPNG-export")
+                    if not os.path.exists(pasta_nova):
+                        os.makedirs(pasta_nova)
+                    novo_caminho = os.path.join(pasta_nova, os.path.basename(caminho))
+
+                    if verificar_tamanho_da_imagem(img, caminho):  # Verifica se a imagem é válida antes de salvar
+                        img.save(novo_caminho)
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
                 check_imagem_salva = False
@@ -138,7 +157,7 @@ def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas,check_criar_nov
         messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
         check_imagem_salva = False
 
-    #Corfimação que a imagem foi salva
+    # Confirmação que a imagem foi salva
     if check_imagem_salva == True:
         messagebox.showinfo("Salvar", f"Arquivos salvos com sucesso!")
 
