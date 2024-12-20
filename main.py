@@ -111,7 +111,7 @@ def switch_fancy_counter(check_fancycounter):
     return check_fancycounter.get()
 
 def verificar_tamanho_da_imagem(img, caminho):
-    TAMANHO_MAXIMO_KB = 1200000  # 1200 KB
+    TAMANHO_MAXIMO_KB = 1228800  # 1200 KB (informar em bytes)
     DIMENSAO_MAXIMA = 16000  # 16 mil pixels (largura ou altura)
 
     # Verificar tamanho do arquivo
@@ -147,9 +147,8 @@ def salvar_arquivos_em_lote(imagens_processadas, caminhos_saidas,check_criar_nov
                     if not os.path.exists(pasta_nova):
                         os.makedirs(pasta_nova)
                     novo_caminho = os.path.join(pasta_nova, os.path.basename(caminho))
+                    img.save(novo_caminho)
 
-                    if verificar_tamanho_da_imagem(img, caminho):  # Verifica se a imagem é válida antes de salvar
-                        img.save(novo_caminho)
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao salvar a imagem {caminho}: {e}")
                 check_imagem_salva = False
