@@ -116,12 +116,15 @@ def verificar_tamanho_da_imagem(img, caminho):
 
     # Verificar tamanho do arquivo
     tamanho_imagem_kb = os.path.getsize(caminho)
+    print("tamanho: ", tamanho_imagem_kb, " KB")
+
     if tamanho_imagem_kb > TAMANHO_MAXIMO_KB:
         messagebox.showerror("Erro", f"A imagem {caminho} é maior que o limite de 1.200 KB ({tamanho_imagem_kb:.2f} KB).")
         return False
 
     # Verificar dimensões da imagem
     largura, altura = img.size
+    print("altura: ",altura,"px ","largura: ", largura,"px")
     if altura > DIMENSAO_MAXIMA or largura > DIMENSAO_MAXIMA:
         messagebox.showerror("Erro",f"A imagem {caminho} tem dimensões maiores que o limite de 16000 pixels ({largura}x{altura} pixels).")
         return False
@@ -240,7 +243,7 @@ def abrir_previsualizacao(imagem_final, salvar_func=None):
 
     # Slider para controle de zoom
     zoom_label = ttk.Label(previsualizacao, text="Zoom")
-    zoom_label.grid(row=2, column=0, sticky="n", padx=10, pady=5)
+    zoom_label.grid(row=2, column=0, sticky="n", padx=10, pady=0)
 
     zoom_slider = ttk.Scale(previsualizacao, from_=1, to=200, orient="horizontal", command=aplicar_zoom)
     zoom_slider.set(100)  # Começa com zoom de 100%
@@ -259,11 +262,11 @@ def help():
 
     # Criando a área de texto para exibir o conteúdo de ajuda
     help_text = """
-    TEXTO DO CHAT GPT VAI SER ATUALIZADO
-    
+      
     ### Ajuda - FontPNG
 
-    Este programa permite processar imagens de texto em formato PNG, JPG ou JPEG, realizando o recorte dos caracteres em cada imagem e ajustando seu formato e espaçamento. Além disso, você pode escolher a opção de criar uma nova pasta para salvar as imagens processadas.
+    Este programa permite processar imagens de texto em formato PNG, JPG ou JPEG, realizando o recorte dos caracteres em cada imagem e ajustando seu formato 
+    e espaçamento. Além disso, você pode escolher a opção de criar uma nova pasta para salvar as imagens processadas.
 
     #### Passos para usar:
 
@@ -273,7 +276,7 @@ def help():
 
     2. **Seleção de Pasta de Saída**:
        - Clique no botão **"Selecionar Pasta"** para escolher onde as imagens processadas serão salvas.
-       - O programa permite que você salve as imagens na pasta atual ou crie uma nova pasta.
+       - O programa permite que você salve as imagens na pasta atual ou crie uma nova pasta (FontPNG-export).
 
     3. **Configuração dos Parâmetros**:
        - **Gap Fancycounter (px)**: Defina o espaçamento extra em pixels para o efeito "fancycounter" nas imagens.
@@ -297,6 +300,8 @@ def help():
 
     #### Dúvidas e Suporte:
     Se você tiver algum problema ao usar o programa, por favor, verifique se todas as etapas foram seguidas corretamente. Caso o erro persista, entre em contato com o desenvolvedor para obter mais assistência.
+    
+    texto criado pelo chat gpt (apenas para teste)
     """
 
     # Criando um widget de label para mostrar o texto de ajuda
@@ -345,7 +350,7 @@ def criar_interface():
 
     # Botão para pré-visualizar
     ttk.Button(root, text="Pré-visualizar", command=lambda: previsualizar_multiplos_arquivos(entrada_arquivos, gap_linha, gap_entre, entrada_pasta,check_fancycounter,check_criar_nova_pasta)).pack(anchor="w", padx=10, pady=20)
-    #ttk.Button(root, text="Help", command=help).pack(anchor="w", padx=10, pady=10)
+    ttk.Button(root, text="Help", command=help).pack(anchor="w", padx=10, pady=10)
 
     root.mainloop()
 
